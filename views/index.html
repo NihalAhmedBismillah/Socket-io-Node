@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Sensor Page</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style type="text/css">
+      .centerDiv {
+        width: 40%;
+        height: 50%;
+        margin-top: 5%;
+        margin-left: 20%;
+        background-color: lightgray;
+      }
+      .error {
+        color: Tomato;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+    <script
+      async
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <!--socket.io.js is automatically added by node-->
+    <script src="socket.io/socket.io.js"></script>
+    <script>
+      function setUserInfo(message) {
+        $("#user_name").text(message.userName);
+        $("#started_time").text(
+          moment(message.startedDateTime).format("MMMM Do YYYY, h:mm:ss a")
+        );
+        $("#end_time").text(
+          moment(message.endDateTime).format("MMMM Do YYYY, h:mm:ss a")
+        );
+        $("#h_b_r").text(message.heardBeatRate.count);
+      }
+      //Connecting To socket.io
+      const socket = io.connect(window.location.host);
+      let connctFun;
+      let messageData = null;
+      socket.on("sessionstarted", message => {
+        if (message) {
+          messageData = message;
+          setUserInfo(message);
+        } else {
+          $("#error").text(
+            "Sorry! You are not registered for this workout, Please connect with support desk."
+          );
+        }
+      });
+      socket.on("connect", () => {
+        // Update
+        setInterval(() => {
+          if (messageData && messageData._id) {
+            socket.emit("heartbeatpulse", {
+              id: messageData._id,
+              count: messageData.heardBeatRate.count
+            });
+          }
+        }, 1000);
+      });
+      socket.on("heartbeatpulseupdted", hbpUpdateMessage => {
+        messageData.heardBeatRate.count = hbpUpdateMessage.heardBeatRate.count;
+        $("#h_b_r").text(hbpUpdateMessage.heardBeatRate.count);
+      });
+      function disconnect() {
+       
+        socket.emit("disconnect");
+        setTimeout(() => {
+          socket.disconnect(0);
+        }, 3000);
+        
+      }
+    </script>
+    <div class="centerDiv">
+      <div class="card" style="  margin-left: 30px;">
+        <img src="images/user.png" alt="John" style="width:20%; height:20%;" />
+        <h1 id="user_name"></h1>
+        <p class="started_time">Session Started Time</p>
+        <strong class="started_time" id="started_time"></strong>
+        <p class="end_time">Session End Time</p>
+        <strong class="end_time" id="end_time"></strong>
+        <h3>Heard Beat Rate</h3>
+        <h2 id="h_b_r"></h2>
+        <h3 class="error" id="error"></h3>
+        <button class="primary" onclick="disconnect()">Close Session</button>
+      </div>
+    </div>
+  </body>
+</html>

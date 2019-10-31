@@ -1,0 +1,6 @@
+{
+    "dbName": "GYMDB",
+    "PORT": "3001",
+    "dbConnectionUrl": "mongodb://127.0.0.1:27017/",
+    "baseUrl":"http://localhost:3001/"
+}

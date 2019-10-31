@@ -1,0 +1,86 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Sensor View Details</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script
+      async
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"
+    />
+    <style>
+        .color-allotted {
+          background-color: lightsalmon
+        }
+        .color-free {
+          background-color:lightgreen
+        }
+      </style>
+    <script>
+      function bindTable() {
+        $.ajax({
+          type: "GET",
+          url: "http://localhost:3001/api/v1/sensors",
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: response => {
+            const data = response || [];
+            data.forEach(obj => {
+              const isAllocated = obj.isAlloted ? "Allotted" : "Free";
+              const tdbg = obj.isAlloted ? "color-allotted" : "color-free";
+              const isUserProperty = obj.isUserProperty ? "Self" : "Company";
+             
+              let row =
+                "<tr><td> " +
+                obj._id +
+                " </td> <td> " +
+                obj.name +
+                " </td> <td>" +
+                obj.manufName +
+                "</td> <td>" +
+                obj.description +
+                "</td> <td class="+tdbg+">" +
+                isAllocated +
+                "</td> <td>" +
+                isUserProperty +
+                "</td> <td>" +
+                obj.status.toLowerCase() +
+                "</td> </tr>";
+              $("#tbDetails tbody").append(row);
+            });
+          }
+        });
+      }
+
+      $(document).ready(() => {
+        setInterval(() => {
+         $('#tbDetails tbody > tr').remove();
+          bindTable();
+        }, 5000);
+      });
+    </script>
+  </head>
+  <body>
+    <h2>Available Sensors List</h2>
+    <a type="button" href="/" class="btn btn-link">Back</a>
+    <div class="well">
+      <table id="tbDetails" class="table  table-bordered">
+        <thead>
+        <tr>
+          <td>ID</td>
+          <td>Name</td>
+          <td>Manufacture</td>
+          <td>Description</td>
+          <td>Allotted Status</td>
+          <td>Owner</td>
+          <td>Status</td>
+        </tr>
+       </thead>
+       <tbody>
+       </tbody>
+      </table>
+    </div>
+  </body>
+</html>

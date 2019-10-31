@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Allocated Participant Sensors List</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+    <script
+      async
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"
+    />
+    <style>
+      .color-pending {
+        background-color: lightsalmon;
+      }
+      .color-running {
+        background-color: lightgreen;
+      }
+    </style>
+    <script>
+      function bindTable() {
+        // TODO: need to put dynamic id
+        const workoutId = "6ifng-U2nF";
+        $.ajax({
+          type: "GET",
+          url: `http://localhost:3001/api/v1/allocations/sensors/${workoutId}`,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: response => {
+            const data = response || [];
+            data.forEach(obj => {
+              const isUserProperty = obj.sensor[0].isUserProperty
+                ? "Self"
+                : "Company";
+              const sessionStarted = obj.sessionStarted ? "Running" : "Pending";
+              const tdbg = obj.sessionStarted
+                ? "color-running"
+                : "color-pending";
+              let row =
+                "<tr><td> " +
+                obj._id +
+                " </td> <td> " +
+                obj.user[0].firstName +
+                " " +
+                obj.user[0].lastName +
+                " </td> <td>" +
+                obj.user[0].gender +
+                "</td> <td>" +
+                obj.sensor[0]._id +
+                "</td> <td>" +
+                obj.sensor[0].name +
+                "</td> <td >" +
+                isUserProperty +
+                "</td> <td>" +
+                obj.heardBeatRate.count +
+                "</td> <td>" +
+                moment(obj.startedDateTime).format("LTS") +
+                "</td> <td>" +
+                moment(obj.endDateTime).format("LTS") +
+                "</td> <td class=" +
+                tdbg +
+                ">" +
+                sessionStarted +
+                "</td> <td>" +
+                obj.status.toLowerCase() +
+                "</td> </tr>";
+              $("#tbDetails tbody").append(row);
+            });
+          }
+        });
+      }
+
+      $(document).ready(() => {
+        setInterval(() => {
+          $("#tbDetails tbody > tr").remove();
+          bindTable();
+        }, 5000);
+      });
+    </script>
+  </head>
+  <body>
+    <h2>Allocated Participant Sensors List</h2>
+    <a type="button" href="/" class="btn btn-link">Back</a>
+    <div class="well">
+      <table id="tbDetails" class="table  table-bordered">
+        <thead>
+          <tr>
+            <td>ID</td>
+            <td>Participant Name</td>
+            <td>Gender</td>
+            <td>Sensor Code</td>
+            <td>Sensor Title</td>
+            <td>Owner</td>
+            <td>HBR Count</td>
+            <td>Start Time</td>
+            <td>End Time</td>
+            <td>Session Status</td>
+            <td>Status</td>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </body>
+</html>
