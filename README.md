@@ -1,7 +1,13 @@
 # Socket-io-Node
 
-# To run app 
+# To install node dependencies
 
 ```
 npm install 
 ```
+# To run app
+
+```
+npm start
+```
+
