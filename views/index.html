@@ -45,9 +45,9 @@
       }
       //Connecting To socket.io
       const socket = io.connect(window.location.host);
-      let connctFun;
       let messageData = null;
       socket.on("sessionstarted", message => {
+        localStorage.setItem("workoutId", message.workoutId);
         if (message) {
           messageData = message;
           setUserInfo(message);
@@ -61,25 +61,25 @@
         // Update
         setInterval(() => {
           if (messageData && messageData._id) {
+            let objClone = { ...messageData };
             socket.emit("heartbeatpulse", {
-              id: messageData._id,
-              count: messageData.heardBeatRate.count
+              id: objClone._id,
+              count: objClone.heardBeatRate.count
             });
           }
-        }, 1000);
+        }, 5000);
       });
       socket.on("heartbeatpulseupdted", hbpUpdateMessage => {
-        messageData.heardBeatRate.count = hbpUpdateMessage.heardBeatRate.count;
-        $("#h_b_r").text(hbpUpdateMessage.heardBeatRate.count);
+        let objClone  =  {...hbpUpdateMessage };
+        messageData.heardBeatRate.count = objClone.heardBeatRate.count;
+        $("#h_b_r").text(objClone.heardBeatRate.count);
       });
-      function disconnect() {
-       
-        socket.emit("disconnect");
-        setTimeout(() => {
-          socket.disconnect(0);
-        }, 3000);
-        
-      }
+      // function disconnect() {
+      //   socket.emit("disconnect");
+      //   setTimeout(() => {
+      //     socket.disconnect(0);
+      //   }, 3000);
+      // }
     </script>
     <div class="centerDiv">
       <div class="card" style="  margin-left: 30px;">

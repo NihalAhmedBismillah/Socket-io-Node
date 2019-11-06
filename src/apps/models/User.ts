@@ -12,6 +12,9 @@ export class Address {
     zipCode: string = null;
     countryCode: string = null;
     isDefault= true;
+    constructor(values?:Address){
+        if(values) Object.assign(this,values);
+    }
 }
 
 
@@ -21,6 +24,9 @@ export class Address {
 export class ContractNo {
     contType: string = null;
     contNo: string = null;
+    constructor(values?:ContractNo){
+        if(values) Object.assign(this,values);
+    }
 }
 
 

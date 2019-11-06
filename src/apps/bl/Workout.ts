@@ -20,4 +20,8 @@ export class WorkoutBL {
         workout.modifyBy = loggedUserId// TODO: Logged user Id
         return await DbOperation.save(workout, COLLECTION_NAME);
     }
+
+    public static async insertMany(docs:any):Promise<boolean>{
+        return await DbOperation.insertMany(docs, COLLECTION_NAME);
+       }
 }

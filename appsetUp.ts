@@ -78,7 +78,6 @@ export class AppSetup {
             new AllocationSensorController(this.app).init()]);
             console.log('controllers registered!');
             this.app.get("/", (req, res) => {
-               // res.writeHead(200, { "Content-Type": "text/html" });
                 //Passing HTML To Browser
                 res.render('index.html');
                 //Ending Response

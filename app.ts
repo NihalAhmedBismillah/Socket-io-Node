@@ -3,6 +3,7 @@ import * as express from 'express';
 const config = require('./src/apps/lib/config.json');
 import { AppSetup } from './appsetUp';
 import { SocketConnection } from './socketconnection';
+import { FakeDataGenerator } from './src/apps/bl/DummyDataGenerator';
 export const app = express();
 
 /**
@@ -10,7 +11,7 @@ export const app = express();
  */
 class Application {
 
-    public static async run() {
+    public static async run(): Promise<boolean> {
         try {
 
             app.engine('html', require('ejs').renderFile);
@@ -19,8 +20,13 @@ class Application {
             await new AppSetup(app).initApp();
             //Telling Express+Socket.io App To Listen To Port
             const io = require('socket.io').listen(app.listen(config['PORT']));
+            // check if dummy record is true
+            if (config['isFakesRecord']) {
+                const iteration: number = +config['fakeRecordNo']
+                await FakeDataGenerator.run(iteration);
+            }
             SocketConnection.connectSocket(io);
-            return;
+            return Promise.resolve(true);
         }
         catch (error) {
             return error;

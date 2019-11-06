@@ -20,4 +20,8 @@ export class UserBL {
         user.modifyBy = loggedUserId// TODO: Logged user Id
         return await DbOperation.save(user, COLLECTION_NAME);
     }
+
+    public static async insertMany(docs:any):Promise<boolean>{
+        return await DbOperation.insertMany(docs, COLLECTION_NAME);
+       }
 }

@@ -22,7 +22,7 @@
     <script>
       function bindTable() {
         // TODO: need to put dynamic id
-        const workoutId = "6ifng-U2nF";
+        const workoutId = localStorage.getItem("workoutId");
         $.ajax({
           type: "GET",
           url: `http://localhost:3001/api/v1/allocations/sensors/${workoutId}`,

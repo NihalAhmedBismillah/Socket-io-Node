@@ -23,6 +23,10 @@ export class AllocationSensorBL {
         return await DbOperation.save(allocationSensor, COLLECTION_NAME);
     }
 
+    public static async insertMany(docs: any): Promise<boolean> {
+        return await DbOperation.insertMany(docs, COLLECTION_NAME);
+    }
+
     /**
     * 
     * @param Get Allocate Sensors 
@@ -35,9 +39,9 @@ export class AllocationSensorBL {
     * 
     * @param Get Allocate Sensors  by id
     */
-   public static async getAllocatedSensorById(sensorId: string): Promise<any> {
-    return await DbOperation.find({ _id: sensorId }, COLLECTION_NAME);
-}
+    public static async getAllocatedSensorById(sensorId: string): Promise<any> {
+        return await DbOperation.find({ _id: sensorId }, COLLECTION_NAME);
+    }
 
 
     public static async startSession(): Promise<AllocationSession> {
@@ -53,7 +57,7 @@ export class AllocationSensorBL {
         }
     }
 
-    public static async allocateNewSensor(data: AllocationSession): Promise<any> {
+    public static async allocateNewSensor(data: AllocationSession): Promise<AllocationSensor> {
 
         let response = await SensorBL.getNonAllocatedSensors();
         if (response && response.length) {
@@ -67,7 +71,8 @@ export class AllocationSensorBL {
             newAllocatedSensor.sensorId = response._id;
             newAllocatedSensor.heardBeatRate = data.heardBeatRate;
             newAllocatedSensor.endDateTime = new Date().toISOString();
-            return await this.allocateSensor(newAllocatedSensor);
+            await this.allocateSensor(newAllocatedSensor);
+            return Promise.resolve(response);
         } else {
             return null;
         }
@@ -84,9 +89,9 @@ export class AllocationSensorBL {
         const updateObject = { query: { _id: id }, updateFields: { sessionStarted: false, startedDateTime: new Date().toISOString(), endDateTime: new Date().toISOString(), status: 'INACTIVE' } };
         return await DbOperation.updateFields(updateObject, COLLECTION_NAME);
     }
-//
-    public static async updateHeartBeatPulse(id: string,heardBeatRate:HeardBeatRate): Promise<any> {
-        const updateObject = { query: { _id: id }, updateFields: { heardBeatRate: heardBeatRate} };
+    //
+    public static async updateHeartBeatPulse(id: string, heardBeatRate: HeardBeatRate): Promise<any> {
+        const updateObject = { query: { _id: id }, updateFields: { heardBeatRate: heardBeatRate } };
         return await DbOperation.updateFields(updateObject, COLLECTION_NAME);
     }
 

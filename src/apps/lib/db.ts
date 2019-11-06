@@ -22,6 +22,25 @@ export class DbOperation {
             });
         });
     }
+
+    
+    /**
+     * 
+     * @param data 
+     * @param collectionName 
+     */
+    public static insertMany(data: any, collectionName: string): Promise<any> {
+
+        return new Promise((resolve, reject) => {
+
+            if (!data || !collectionName) return reject('Invalid paramater');
+            let db = global['locator'].get('db');
+            let collection = db.collection(collectionName);
+            collection.insertMany(data, (error, result) => {
+                return (!error) ? resolve(result.result) : reject(error);
+            });
+        });
+    }
     /**
      * 
      * @param updateOptions 
@@ -195,5 +214,17 @@ export class DbOperation {
                 return (!error) ? res(result.result) : rej(error);
             });
         });
+    }
+    /**
+     * 
+     * @param collectionName 
+     */
+
+    public static async deleteAllDocuments(collectionName:string){
+        
+        if (!collectionName) throw('Invalid paramater');
+        let db = global['locator'].get('db');
+        let collection = db.collection(collectionName);  
+       await collection.deleteMany({});
     }
 }

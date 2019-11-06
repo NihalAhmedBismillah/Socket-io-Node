@@ -1,8 +1,8 @@
 
 import { DbOperation } from '../lib/db'
 import { Sensor } from '../models/Sensor';
-const shortid = require('shortid'),
-    COLLECTION_NAME = 'SENSOR'
+const shortid = require('shortid');
+const COLLECTION_NAME = 'SENSOR';
 
 
 export class SensorBL {
@@ -19,6 +19,10 @@ export class SensorBL {
         sensor.modifyOn = new Date().toISOString();
         sensor.modifyBy = loggedUserId// TODO: Logged user Id
         return await DbOperation.save(sensor, COLLECTION_NAME);
+    }
+
+    public static async insertMany(docs:any):Promise<boolean>{
+     return await DbOperation.insertMany(docs, COLLECTION_NAME);
     }
 
     public static async updateSensor(sensorId: string): Promise<any> {
